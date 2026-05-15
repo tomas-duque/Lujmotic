@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUJMOTIC - Panel Administrador</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin/styles-admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body class="admin-body">
+
+    
+    <header class="admin-navbar">
+        <div class="admin-nav-left">
+            <img src="images/Lujmotic_PNG.png" alt="LUJMOTIC Logo" class="admin-logo">
+            <span class="admin-title">Panel Administrador</span>
+        </div>
+        <div class="admin-nav-right">
+            <span id="admin-user-name" class="admin-user">Administrador</span>
+            <button id="logout-btn" class="btn-logout">Cerrar sesión</button>
+        </div>
+    </header>
+
+    <div class="admin-container">
+        
+        <aside class="admin-sidebar">
+            <nav class="admin-nav-menu">
+                <button class="admin-tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">
+                    📊 Dashboard
+                </button>
+                <button class="admin-tab-btn" data-tab="productos" onclick="switchTab('productos')">
+                    📦 Productos
+                </button>
+                <button class="admin-tab-btn" data-tab="pedidos" onclick="switchTab('pedidos')">
+                    🛒 Pedidos
+                </button>
+                <button class="admin-tab-btn" data-tab="usuarios" onclick="switchTab('usuarios')">
+                    👥 Usuarios
+                </button>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            
+            <div id="tab-dashboard" class="admin-tab-content" style="display: block;">
+                <h1>Dashboard</h1>
+
+                <div id="admin-stats" class="stats-grid">
+                </div>
+
+                <div class="recent-section">
+                    <h2>Pedidos Recientes</h2>
+                    <div class="recent-orders-list">
+                    </div>
+                </div>
+            </div>
+
+            
+            <div id="tab-productos" class="admin-tab-content" style="display: none;">
+                <div class="productos-header">
+                    <h1>Gestión de Productos</h1>
+                    <button id="add-product-btn" class="btn-add-product">
+                        Nuevo Producto
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Imagen</th>
+                                <th>Nombre</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Categoría</th>
+                                <th>Talla</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            
+            <div id="tab-pedidos" class="admin-tab-content" style="display: none;">
+                <h1>Gestión de Pedidos</h1>
+                <p class="subtitle">Historial completo de pedidos realizados</p>
+
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Pedido ID</th>
+                                <th>Cliente</th>
+                                <th>Email</th>
+                                <th>Productos</th>
+                                <th>Total</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="tab-usuarios" class="admin-tab-content" style="display: none;">
+                <h1>Gestión de Usuarios</h1>
+                <p class="subtitle">Usuarios registrados en el sistema</p>
+
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="product-form-modal" class="admin-modal" style="display: none;">
+        <div class="admin-modal-content">
+            <div class="admin-modal-header">
+                <h2 id="form-title">Crear Nuevo Producto</h2>
+                <button id="form-close-btn" class="btn-modal-close">✕</button>
+            </div>
+
+            <form id="product-form" class="admin-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-name">Nombre *</label>
+                        <input id="product-name" type="text" placeholder="Nombre del producto" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-price">Precio *</label>
+                        <input id="product-price" type="number" placeholder="0" step="0.01" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-stock">Stock *</label>
+                        <input id="product-stock" type="number" placeholder="0" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-category">Categoría *</label>
+                        <select id="product-category" required>
+                            <option value="">Selecciona una categoría</option>
+                            <option value="Hombre">Hombre</option>
+                            <option value="Mujer">Mujer</option>
+                            <option value="Accesorios">Accesorios</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-talla">Talla</label>
+                        <select id="product-talla">
+                            <option value="">Selecciona talla</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-color">Color</label>
+                        <input id="product-color" type="text" placeholder="Ej: Negro, Blanco, Beige">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-description">Descripción</label>
+                    <textarea id="product-description" placeholder="Descripción del producto" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-image">URL de Imagen</label>
+                    <input id="product-image" type="url" placeholder="https://ejemplo.com/imagen.jpg">
+                </div>
+
+                <div class="form-actions">
+                    <button id="form-save-btn" type="button" class="btn-save">Guardar Producto</button>
+                    <button id="form-cancel-btn" type="button" class="btn-cancel" onclick="closeProductForm()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="js/modules/admin/adminPanel.js"></script>
+
+</body>
+</html>
