@@ -4,6 +4,10 @@ import { getAdminDashboardStats } from "./adminService.js";
 
 let editingProductId = null;
 
+const getProductsTableBody = () => document.getElementById("products-table-body");
+const getOrdersTableBody = () => document.getElementById("orders-table-body");
+const getProductFormModal = () => document.getElementById("product-form-modal");
+
 export const renderDashboardStats = () => {
     const stats = getAdminDashboardStats();
     const statsContainer = document.getElementById("admin-stats");
@@ -11,16 +15,16 @@ export const renderDashboardStats = () => {
     if (!statsContainer) return;
 
     const statCards = [
-        { label: "Productos", value: stats.totalProducts, color: "#d4af37" },
-        { label: "Pedidos", value: stats.totalOrders, color: "#ff6b6b" },
-        { label: "Usuarios", value: stats.registeredUsers, color: "#4ecdc4" },
-        { label: "Ventas Totales", value: `$${stats.totalSales.toLocaleString()}`, color: "#45b7d1" },
+        { label: "Productos", value: stats.totalProducts, variant: "products" },
+        { label: "Pedidos", value: stats.totalOrders, variant: "orders" },
+        { label: "Usuarios", value: stats.registeredUsers, variant: "users" },
+        { label: "Ventas Totales", value: `$${stats.totalSales.toLocaleString()}`, variant: "sales" },
     ];
 
     statsContainer.innerHTML = statCards
         .map(
             (stat) => `
-        <div class="stat-card" style="border-left: 4px solid ${stat.color};">
+        <div class="stat-card stat-card--${stat.variant}">
             <h3>${stat.label}</h3>
             <p class="stat-value">${stat.value}</p>
         </div>
@@ -31,25 +35,24 @@ export const renderDashboardStats = () => {
 
 export const renderProductsTable = () => {
     const products = getProducts();
-    const tableBody = document.getElementById("products-table-body");
+    const tableBody = getProductsTableBody();
 
     if (!tableBody) return;
 
     if (products.length === 0) {
         tableBody.innerHTML =
-            '<tr><td colspan="8" style="text-align:center; padding: 20px; color: #aaa;">No hay productos registrados</td></tr>';
+            '<tr><td colspan="8" class="table-empty">No hay productos registrados</td></tr>';
         return;
     }
 
     tableBody.innerHTML = products
-        .map(
-            (product) => `
+        .map((product) => `
         <tr>
             <td>${product.id}</td>
             <td>
                 ${
                     product.image
-                        ? `<img src="${product.image}" alt="${product.name}" style="width: 40px; height: 40px; border-radius: 4px;">`
+                        ? `<img src="${product.image}" alt="${product.name}" class="admin-product-thumb">`
                         : "-"
                 }
             </td>
@@ -59,24 +62,23 @@ export const renderProductsTable = () => {
             <td>${product.category || "-"}</td>
             <td>${product.talla || "-"}</td>
             <td>
-                <button class="btn-edit" onclick="editProduct(${product.id})" title="Editar">✏️</button>
-                <button class="btn-delete" onclick="deleteProductHandler(${product.id})" title="Eliminar">🗑️</button>
+                <button type="button" class="btn-action btn-edit" data-action="edit" data-product-id="${product.id}" title="Editar">✏️</button>
+                <button type="button" class="btn-action btn-delete" data-action="delete" data-product-id="${product.id}" title="Eliminar">🗑️</button>
             </td>
         </tr>
-    `
-        )
+    `)
         .join("");
 };
 
 export const renderOrdersTable = () => {
     const orders = getOrders();
-    const tableBody = document.getElementById("orders-table-body");
+    const tableBody = getOrdersTableBody();
 
     if (!tableBody) return;
 
     if (orders.length === 0) {
         tableBody.innerHTML =
-            '<tr><td colspan="7" style="text-align:center; padding: 20px; color: #aaa;">No hay pedidos registrados</td></tr>';
+            '<tr><td colspan="7" class="table-empty">No hay pedidos registrados</td></tr>';
         return;
     }
 
@@ -93,7 +95,7 @@ export const renderOrdersTable = () => {
                 <td>${formatted.formattedTotal}</td>
                 <td>${formatted.formattedDate}</td>
                 <td>
-                    <button class="btn-view" onclick="viewOrderDetails(${order.id})" title="Ver detalles">👁️</button>
+                    <button type="button" class="btn-action btn-view" data-action="view" data-order-id="${order.id}" title="Ver detalles">👁️</button>
                 </td>
             </tr>
         `;
@@ -102,7 +104,7 @@ export const renderOrdersTable = () => {
 };
 
 export const showProductForm = (productId = null) => {
-    const formModal = document.getElementById("product-form-modal");
+    const formModal = getProductFormModal();
     const formTitle = document.getElementById("form-title");
     const form = document.getElementById("product-form");
 
@@ -128,13 +130,13 @@ export const showProductForm = (productId = null) => {
         form.reset();
     }
 
-    formModal.style.display = "flex";
+    formModal.classList.remove("hidden");
 };
 
 export const closeProductForm = () => {
-    const formModal = document.getElementById("product-form-modal");
+    const formModal = getProductFormModal();
     if (formModal) {
-        formModal.style.display = "none";
+        formModal.classList.add("hidden");
     }
     editingProductId = null;
 };
@@ -206,6 +208,9 @@ export const registerAdminUIEvents = () => {
     const closeButton = document.getElementById("form-close-btn");
     const saveButton = document.getElementById("form-save-btn");
     const addButton = document.getElementById("add-product-btn");
+    const cancelButton = document.getElementById("form-cancel-btn");
+    const productsTableBody = getProductsTableBody();
+    const ordersTableBody = getOrdersTableBody();
 
     if (closeButton) {
         closeButton.addEventListener("click", closeProductForm);
@@ -213,16 +218,44 @@ export const registerAdminUIEvents = () => {
     if (saveButton) {
         saveButton.addEventListener("click", saveProductFromForm);
     }
+    if (cancelButton) {
+        cancelButton.addEventListener("click", closeProductForm);
+    }
     if (addButton) {
         addButton.addEventListener("click", () => showProductForm());
     }
 
-    const formModal = document.getElementById("product-form-modal");
+    const formModal = getProductFormModal();
     if (formModal) {
         formModal.addEventListener("click", (e) => {
             if (e.target === formModal) {
                 closeProductForm();
             }
+        });
+    }
+
+    if (productsTableBody) {
+        productsTableBody.addEventListener("click", (event) => {
+            const button = event.target.closest("button[data-action]");
+            if (!button) return;
+
+            const action = button.dataset.action;
+            const productId = Number(button.dataset.productId);
+            if (action === "edit") {
+                showProductForm(productId);
+            } else if (action === "delete") {
+                deleteProductHandler(productId);
+            }
+        });
+    }
+
+    if (ordersTableBody) {
+        ordersTableBody.addEventListener("click", (event) => {
+            const button = event.target.closest("button[data-action='view']");
+            if (!button) return;
+
+            const orderId = Number(button.dataset.orderId);
+            showOrderDetails(orderId);
         });
     }
 };

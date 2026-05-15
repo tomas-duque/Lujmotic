@@ -1,3 +1,5 @@
+import { removeItem } from "./cart.js";
+
 export const renderCart = (cart) => {
     const container = document.getElementById("cart-items");
     const totalText = document.getElementById("cart-total");
@@ -8,24 +10,46 @@ export const renderCart = (cart) => {
     let total = 0;
 
     if (!cart || cart.length === 0) {
-        container.innerHTML =
-            "<p style='color:#777; text-align:center; padding: 20px;'>Tu carrito está vacío</p>";
+        const emptyMessage = document.createElement("p");
+        emptyMessage.className = "cart-empty-message";
+        emptyMessage.textContent = "Tu carrito está vacío";
+        container.appendChild(emptyMessage);
     } else {
         cart.forEach((item, index) => {
             const subtotal = item.price * item.qty;
             total += subtotal;
-            container.innerHTML += `
-                <div class="cart-item" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #222; padding-bottom:10px;">
-                    <div>
-                        <strong style="color:white; font-size:14px;">${item.name}</strong><br>
-                        <small style="color:#aaa;">x${item.qty} - $${item.price.toLocaleString()}</small>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <span style="color:#d4af37; font-weight:bold;">$${subtotal.toLocaleString()}</span>
-                        <button onclick="removeItem(${index}, event)" style="color:#ff4d4d; border:none; background:none; cursor:pointer; font-size:18px; font-weight:bold; padding:5px;">✕</button>
-                    </div>
-                </div>
+
+            const cartItem = document.createElement("div");
+            cartItem.className = "cart-item";
+
+            const cartItemDetails = document.createElement("div");
+            cartItemDetails.className = "cart-item-details";
+            cartItemDetails.innerHTML = `
+                <strong>${item.name}</strong>
+                <small>x${item.qty} - $${item.price.toLocaleString()}</small>
             `;
+
+            const cartItemActions = document.createElement("div");
+            cartItemActions.className = "cart-item-actions";
+
+            const priceTag = document.createElement("span");
+            priceTag.className = "cart-item-price";
+            priceTag.textContent = `$${subtotal.toLocaleString()}`;
+
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.className = "cart-remove-btn";
+            removeButton.textContent = "✕";
+            removeButton.addEventListener("click", (event) => {
+                event.stopPropagation();
+                removeItem(index);
+            });
+
+            cartItemActions.appendChild(priceTag);
+            cartItemActions.appendChild(removeButton);
+            cartItem.appendChild(cartItemDetails);
+            cartItem.appendChild(cartItemActions);
+            container.appendChild(cartItem);
         });
     }
 

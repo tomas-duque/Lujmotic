@@ -5,23 +5,20 @@ import {
     renderOrdersTable,
     switchTab,
     registerAdminUIEvents,
-    showProductForm,
-    closeProductForm,
-    deleteProductHandler,
-    showOrderDetails,
 } from "./adminUI.js";
 import { getOrders } from "./ordersService.js";
+import { getUsers } from "../storage.js";
 
 const initializeAdminPanel = () => {
     const accessValidation = validateAdminAccess();
 
     if (!accessValidation.isAdmin) {
         document.body.innerHTML = `
-            <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #0a0a0a;">
-                <div style="text-align: center; color: white;">
-                    <h1 style="font-size: 32px; margin-bottom: 20px;">❌ Acceso Denegado</h1>
-                    <p style="font-size: 18px; color: #aaa; margin-bottom: 30px;">${accessValidation.error}</p>
-                    <a href="index.html" style="color: #d4af37; text-decoration: none; font-weight: 700;">Volver al inicio</a>
+            <div class="admin-access-denied">
+                <div class="card">
+                    <h1>❌ Acceso Denegado</h1>
+                    <p>${accessValidation.error}</p>
+                    <a href="index.html">Volver al inicio</a>
                 </div>
             </div>
         `;
@@ -33,27 +30,35 @@ const initializeAdminPanel = () => {
         userNameElement.innerText = accessValidation.user.name;
     }
 
-    window.switchTab = switchTab;
-    window.editProduct = showProductForm;
-    window.deleteProductHandler = deleteProductHandler;
-    window.closeProductForm = closeProductForm;
-    window.viewOrderDetails = showOrderDetails;
-
     registerAdminUIEvents();
+    registerAdminPanelEvents();
 
     renderDashboardStats();
     renderProductsTable();
     renderOrdersTable();
     renderUsersTable();
     renderRecentOrders();
+};
 
+const registerAdminPanelEvents = () => {
     const logoutBtn = document.getElementById("logout-btn");
+    const tabButtons = document.querySelectorAll(".admin-tab-btn");
+
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
             localStorage.removeItem("currentUser");
             window.location.href = "index.html";
         });
     }
+
+    tabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const tabName = button.dataset.tab;
+            if (tabName) {
+                switchTab(tabName);
+            }
+        });
+    });
 };
 
 const renderRecentOrders = () => {
@@ -63,7 +68,7 @@ const renderRecentOrders = () => {
     if (!recentList) return;
 
     if (orders.length === 0) {
-        recentList.innerHTML = "<p style='color:#aaa; padding: 18px;'>No hay pedidos recientes.</p>";
+        recentList.innerHTML = '<p class="recent-order-empty">No hay pedidos recientes.</p>';
         return;
     }
 
@@ -76,7 +81,7 @@ const renderRecentOrders = () => {
                         <strong>Pedido #${order.id}</strong>
                         <p>${order.user} · ${new Date(order.date).toLocaleDateString("es-CL")}</p>
                     </div>
-                    <div style="text-align:right;">
+                    <div class="recent-order-meta">
                         <p>Total: <strong>$${order.total.toLocaleString()}</strong></p>
                         <p>${order.items?.length || 0} productos</p>
                     </div>
@@ -87,14 +92,14 @@ const renderRecentOrders = () => {
 };
 
 const renderUsersTable = () => {
-    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const users = getUsers();
     const tableBody = document.getElementById("users-table-body");
 
     if (!tableBody) return;
 
     if (users.length === 0) {
         tableBody.innerHTML =
-            '<tr><td colspan="4" style="text-align:center; padding: 20px; color: #aaa;">No hay usuarios registrados</td></tr>';
+            '<tr><td colspan="4" class="table-empty">No hay usuarios registrados</td></tr>';
         return;
     }
 
@@ -104,8 +109,8 @@ const renderUsersTable = () => {
         <tr>
             <td>${user.name}</td>
             <td>${user.email}</td>
-            <td><span style="background: ${user.role === "admin" ? "#ff6b6b" : user.role === "proveedor" ? "#ffc95e" : "#4ecdc4"}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; text-transform: uppercase;">${user.role}</span></td>
-            <td><span style="color: #4ecdc4; font-weight: 700;">Activo</span></td>
+            <td><span class="role-pill role-pill--${user.role}">${user.role}</span></td>
+            <td><span class="status-pill">Activo</span></td>
         </tr>
     `
         )

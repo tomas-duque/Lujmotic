@@ -2,6 +2,14 @@ import { getUsers, saveUsers, saveCurrentUser } from "./storage.js";
 import { showLogin, showRegister, showForgot } from "./modal.js";
 import { showUserDropdown } from "./panel.js";
 
+const recoverMsg = document.getElementById("recover-msg");
+
+const setRecoverMessage = (message, type = "error") => {
+    if (!recoverMsg) return;
+
+    recoverMsg.innerHTML = `<p class="form-message ${type === "success" ? "form-success" : "form-error"}">${message}</p>`;
+};
+
 const defaultUsers = [
     {
         name: "Administrador",
@@ -55,6 +63,7 @@ export const registerUser = () => {
         email,
         password,
         role: "cliente",
+        createdAt: new Date().toISOString(),
     });
 
     saveUsers(users);
@@ -87,28 +96,25 @@ export const loginUser = () => {
     const currentUser = {
         ...user,
         role: user.role || "cliente",
+        createdAt: user.createdAt || new Date().toISOString(),
     };
 
-    if (!user.role) {
-        const userIndex = users.findIndex((item) => item.email === email);
-        if (userIndex !== -1) {
-            users[userIndex] = currentUser;
-            saveUsers(users);
-        }
+    const userIndex = users.findIndex((item) => item.email === email);
+    if (userIndex !== -1) {
+        users[userIndex] = currentUser;
+        saveUsers(users);
     }
 
     saveCurrentUser(currentUser);
-    alert(`Bienvenido/a ${currentUser.name} - Rol: ${currentUser.role}`);
     showUserDropdown(currentUser);
     document.getElementById("loginModal").style.display = "none";
 };
 
 export const recoverPassword = () => {
     const email = document.getElementById("forgot-email")?.value.trim();
-    const msg = document.getElementById("recover-msg");
 
     if (!email) {
-        if (msg) msg.innerText = "Ingresa tu correo electrónico.";
+        setRecoverMessage("Ingresa tu correo electrónico.");
         return;
     }
 
@@ -116,17 +122,17 @@ export const recoverPassword = () => {
     const userExists = users.find((user) => user.email === email);
 
     if (!userExists) {
-        if (msg) msg.innerText = "No existe una cuenta con ese correo.";
+        setRecoverMessage("No existe una cuenta con ese correo.");
         return;
     }
 
-    if (msg) {
-        msg.innerHTML = `
-            <div class="input-field" style="margin-top: 20px;">
+    if (recoverMsg) {
+        recoverMsg.innerHTML = `
+            <div class="input-field">
                 <label>Nueva contraseña</label>
                 <input id="new-password" type="password" placeholder="Nueva contraseña">
             </div>
-            <button class="btn-premium" onclick="saveNewPassword('${email}')">
+            <button type="button" id="save-password-btn" data-email="${email}" class="btn-premium">
                 GUARDAR CONTRASEÑA
             </button>
         `;
@@ -152,13 +158,25 @@ export const saveNewPassword = (email) => {
     users[userIndex].password = newPassword;
     saveUsers(users);
 
-    alert("Contraseña actualizada correctamente.");
+    if (recoverMsg) {
+        recoverMsg.innerHTML = "";
+    }
 
     const forgotEmail = document.getElementById("forgot-email");
-    const recoverMsg = document.getElementById("recover-msg");
-
     if (forgotEmail) forgotEmail.value = "";
-    if (recoverMsg) recoverMsg.innerHTML = "";
 
     showLogin();
+    alert("Contraseña actualizada correctamente.");
 };
+
+if (recoverMsg) {
+    recoverMsg.addEventListener("click", (event) => {
+        const button = event.target.closest("#save-password-btn");
+        if (!button) return;
+
+        const email = button.dataset.email;
+        if (!email) return;
+
+        saveNewPassword(email);
+    });
+}

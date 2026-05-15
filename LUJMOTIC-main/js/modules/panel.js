@@ -1,4 +1,6 @@
 import { getData, clearCurrentUser } from "./storage.js";
+import { openAccountModal } from "./account/accountUI.js";
+import { openOrdersPanel } from "./account/ordersUI.js";
 
 const userDropdownContainer = document.getElementById("userDropdownContainer");
 const userDropdownBtn = document.getElementById("userDropdownBtn");
@@ -42,6 +44,14 @@ export const showUserDropdown = (user) => {
 
     const menuItems = [];
 
+    menuItems.push({
+        label: "Mi Cuenta",
+        icon: "👤",
+        action: () => {
+            openAccountModal();
+        }
+    });
+
     if (user.role === "admin") {
         menuItems.push({
             label: "Panel Admin",
@@ -50,44 +60,23 @@ export const showUserDropdown = (user) => {
                 window.location.href = "admin.html";
             }
         });
-        menuItems.push({
-            label: "Mi Cuenta",
-            icon: "👤",
-            action: () => {
-                alert("Función en desarrollo");
-            }
-        });
     } else if (user.role === "proveedor") {
         menuItems.push({
             label: "Panel Proveedor",
             icon: "📦",
             action: () => {
-                alert("Panel Proveedor en desarrollo");
-            }
-        });
-        menuItems.push({
-            label: "Mi Cuenta",
-            icon: "👤",
-            action: () => {
-                alert("Función en desarrollo");
-            }
-        });
-    } else {
-        menuItems.push({
-            label: "Mi Cuenta",
-            icon: "👤",
-            action: () => {
-                alert("Mi Cuenta en desarrollo");
-            }
-        });
-        menuItems.push({
-            label: "Mis Pedidos",
-            icon: "📋",
-            action: () => {
-                alert("Mis Pedidos en desarrollo");
+                window.location.href = "admin.html";
             }
         });
     }
+
+    menuItems.push({
+        label: "Mis Pedidos",
+        icon: "📋",
+        action: () => {
+            openOrdersPanel();
+        }
+    });
 
     menuItems.forEach((item) => {
         const itemEl = document.createElement("div");
@@ -119,10 +108,10 @@ export const showUserDropdown = (user) => {
     }
 
     if (userDropdownContainer) {
-        userDropdownContainer.style.display = "flex";
+        userDropdownContainer.classList.remove("hidden");
     }
     if (loginButton) {
-        loginButton.style.display = "none";
+        loginButton.classList.add("hidden");
     }
 };
 
@@ -143,13 +132,10 @@ export const logoutUser = () => {
     }
 
     if (userDropdownContainer) {
-        userDropdownContainer.style.display = "none";
+        userDropdownContainer.classList.add("hidden");
     }
     if (loginButton) {
-        loginButton.style.display = "block";
-    }
-
-    if (loginButton) {
+        loginButton.classList.remove("hidden");
         loginButton.innerText = "Iniciar sesión";
     }
 

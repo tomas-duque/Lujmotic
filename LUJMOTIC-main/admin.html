@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LUJMOTIC - Panel Administrador</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="admin/styles-admin.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body class="admin-body">
@@ -26,16 +25,16 @@
         
         <aside class="admin-sidebar">
             <nav class="admin-nav-menu">
-                <button class="admin-tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">
+                <button class="admin-tab-btn active" data-tab="dashboard" type="button">
                     📊 Dashboard
                 </button>
-                <button class="admin-tab-btn" data-tab="productos" onclick="switchTab('productos')">
+                <button class="admin-tab-btn" data-tab="productos" type="button">
                     📦 Productos
                 </button>
-                <button class="admin-tab-btn" data-tab="pedidos" onclick="switchTab('pedidos')">
+                <button class="admin-tab-btn" data-tab="pedidos" type="button">
                     🛒 Pedidos
                 </button>
-                <button class="admin-tab-btn" data-tab="usuarios" onclick="switchTab('usuarios')">
+                <button class="admin-tab-btn" data-tab="usuarios" type="button">
                     👥 Usuarios
                 </button>
             </nav>
@@ -43,7 +42,7 @@
 
         <main class="admin-main">
             
-            <div id="tab-dashboard" class="admin-tab-content" style="display: block;">
+            <div id="tab-dashboard" class="admin-tab-content active">
                 <h1>Dashboard</h1>
 
                 <div id="admin-stats" class="stats-grid">
@@ -57,7 +56,7 @@
             </div>
 
             
-            <div id="tab-productos" class="admin-tab-content" style="display: none;">
+            <div id="tab-productos" class="admin-tab-content hidden">
                 <div class="productos-header">
                     <h1>Gestión de Productos</h1>
                     <button id="add-product-btn" class="btn-add-product">
@@ -86,7 +85,7 @@
             </div>
 
             
-            <div id="tab-pedidos" class="admin-tab-content" style="display: none;">
+            <div id="tab-pedidos" class="admin-tab-content hidden">
                 <h1>Gestión de Pedidos</h1>
                 <p class="subtitle">Historial completo de pedidos realizados</p>
 
@@ -109,7 +108,7 @@
                 </div>
             </div>
 
-            <div id="tab-usuarios" class="admin-tab-content" style="display: none;">
+            <div id="tab-usuarios" class="admin-tab-content hidden">
                 <h1>Gestión de Usuarios</h1>
                 <p class="subtitle">Usuarios registrados en el sistema</p>
 
@@ -131,7 +130,7 @@
         </main>
     </div>
 
-    <div id="product-form-modal" class="admin-modal" style="display: none;">
+    <div id="product-form-modal" class="admin-modal hidden">
         <div class="admin-modal-content">
             <div class="admin-modal-header">
                 <h2 id="form-title">Crear Nuevo Producto</h2>
@@ -196,7 +195,7 @@
 
                 <div class="form-actions">
                     <button id="form-save-btn" type="button" class="btn-save">Guardar Producto</button>
-                    <button id="form-cancel-btn" type="button" class="btn-cancel" onclick="closeProductForm()">Cancelar</button>
+                    <button id="form-cancel-btn" type="button" class="btn-cancel">Cancelar</button>
                 </div>
             </form>
         </div>

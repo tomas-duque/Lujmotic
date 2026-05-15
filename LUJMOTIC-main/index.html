@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LUJMOTIC</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
@@ -29,8 +30,8 @@
         </div>
 
 
-        <div id="userDropdownContainer" style="display: none;">
-            <button id="userDropdownBtn" class="user-dropdown-btn">
+        <div id="userDropdownContainer" class="hidden">
+            <button id="userDropdownBtn" class="user-dropdown-btn" type="button">
                 <span id="userName">Usuario</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="6 9 12 15 18 9"></polyline>
@@ -59,17 +60,16 @@
 
 <section class="productos">
 
-    <button class="btn-premium" onclick="showSizeGuide()" style="margin-bottom: 40px;">
-    Ver tabla de tallas
-</button>
+    <button id="sizeGuideBtn" type="button" class="btn-premium btn-outline mb-40">
+        Ver tabla de tallas
+    </button>
 
-    <div id="seccion-hombre" style="padding-top: 80px;">
+    <section id="seccion-hombre" class="category-section">
         <h2 class="category-title">Colección Caballero</h2>
-        <div class="grid">
-        </div>
-    </div>
+        <div class="grid"></div>
+    </section>
 
-    <div id="seccion-mujer" style="padding-top: 80px; margin-bottom: 80px;">
+    <section id="seccion-mujer" class="category-section category-section-bottom">
         <h2 class="category-title">Línea Dama</h2>
         <div class="grid">
         </div>
@@ -109,51 +109,55 @@
     </div>
 </section>
 
-<div id="sizeGuideModal" class="modal">
+<div id="sizeGuideModal" class="modal" tabindex="-1">
     <div class="auth-card">
         <h2 class="section-title">Tabla de tallas</h2>
 
-        <table style="width:100%; color:white; border-collapse: collapse; margin-top:20px;">
-            <tr>
-                <th style="border-bottom:1px solid #d4af37; padding:10px;">Talla</th>
-                <th style="border-bottom:1px solid #d4af37; padding:10px;">Pecho</th>
-                <th style="border-bottom:1px solid #d4af37; padding:10px;">Cintura</th>
-            </tr>
-            <tr>
-                <td style="padding:10px;">S</td>
-                <td style="padding:10px;">86-94 cm</td>
-                <td style="padding:10px;">70-78 cm</td>
-            </tr>
-            <tr>
-                <td style="padding:10px;">M</td>
-                <td style="padding:10px;">94-102 cm</td>
-                <td style="padding:10px;">78-86 cm</td>
-            </tr>
-            <tr>
-                <td style="padding:10px;">L</td>
-                <td style="padding:10px;">102-110 cm</td>
-                <td style="padding:10px;">86-94 cm</td>
-            </tr>
-            <tr>
-                <td style="padding:10px;">XL</td>
-                <td style="padding:10px;">110-118 cm</td>
-                <td style="padding:10px;">94-102 cm</td>
-            </tr>
+        <table class="size-guide-table">
+            <thead>
+                <tr>
+                    <th>Talla</th>
+                    <th>Pecho</th>
+                    <th>Cintura</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>S</td>
+                    <td>86-94 cm</td>
+                    <td>70-78 cm</td>
+                </tr>
+                <tr>
+                    <td>M</td>
+                    <td>94-102 cm</td>
+                    <td>78-86 cm</td>
+                </tr>
+                <tr>
+                    <td>L</td>
+                    <td>102-110 cm</td>
+                    <td>86-94 cm</td>
+                </tr>
+                <tr>
+                    <td>XL</td>
+                    <td>110-118 cm</td>
+                    <td>94-102 cm</td>
+                </tr>
+            </tbody>
         </table>
 
-        <button class="btn-premium" onclick="closeSizeGuide()" style="margin-top:25px;">
+        <button id="sizeGuideCloseBtn" type="button" class="btn-premium btn-outline mt-25">
             Cerrar
         </button>
     </div>
 </div>
 
-<div id="loginModal" class="modal">
+<div id="loginModal" class="modal" tabindex="-1">
 
     <!-- LOGIN -->
-    <div id="loginView" class="auth-card">
+    <form id="loginForm" class="auth-card">
         <img src="images/Lujmotic_PNG.png" class="main-logo">
 
-        <button class="btn-google">
+        <button type="button" class="btn-google">
             <img src="images/google-logo.webp">
             Continuar con Google
         </button>
@@ -170,19 +174,19 @@
             <input id="login-password" type="password" placeholder="••••••••">
         </div>
 
-        <button class="btn-premium" onclick="loginUser()">INICIAR SESIÓN</button>
+        <button type="submit" class="btn-premium">INICIAR SESIÓN</button>
         <div class="form-footer">
             <p>¿No tienes una cuenta?
-                <a href="#" class="gold-link" onclick="showRegister()">Regístrate</a>
+                <a href="#" id="showRegisterLink" class="gold-link">Regístrate</a>
             </p>
-            <a href="#" class="forgot" onclick="showForgot()">¿Olvidaste tu contraseña?</a>
+            <a href="#" id="showForgotLink" class="forgot">¿Olvidaste tu contraseña?</a>
         </div>
-    </div>
+    </form>
 
-    <div id="registerView" class="auth-card" style="display:none;">
+    <form id="registerForm" class="auth-card hidden">
         <img src="images/Lujmotic_PNG.png" class="main-logo">
 
-        <button class="btn-google">
+        <button type="button" class="btn-google">
             <img src="images/google-logo.webp">
             Registrarse con Google
         </button>
@@ -192,7 +196,7 @@
         <div class="input-field">
             <label>Nombre</label>
             <input id="register-name" type="text" placeholder="Ej. Juan Pérez" required>
-                </div>
+        </div>
 
         <div class="input-field">
             <label>Correo Electrónico</label>
@@ -202,20 +206,18 @@
         <div class="input-field">
             <label>Contraseña</label>
             <input id="register-password" type="password" placeholder="••••••••" required>
-
         </div>
 
-        <button class="btn-premium" onclick="registerUser()">CREAR CUENTA</button>
-
+        <button type="submit" class="btn-premium">CREAR CUENTA</button>
 
         <div class="form-footer">
             <p>¿Ya tienes cuenta?
-                <a href="#" class="gold-link" onclick="showLogin()">Inicia sesión</a>
+                <a href="#" id="showLoginLink" class="gold-link">Inicia sesión</a>
             </p>
         </div>
-    </div>
+    </form>
 
-    <div id="forgotView" class="auth-card" style="display:none;">
+    <form id="forgotForm" class="auth-card hidden">
         <img src="images/Lujmotic_PNG.png" class="main-logo">
 
         <h2 class="section-title">¿Olvidaste tu contraseña?</h2>
@@ -224,18 +226,70 @@
         <div class="input-field">
             <label>Correo Electrónico</label>
             <input id="forgot-email" type="email" placeholder="tu@email.com" required>
-
         </div>
 
-       <button class="btn-premium" onclick="recoverPassword()">ENVIAR</button>
+        <button type="submit" class="btn-premium">ENVIAR</button>
 
-<div id="recover-msg" style="margin-top: 20px;"></div>
+        <div id="recover-msg" class="recover-msg"></div>
 
         <div class="form-footer">
-            <a href="#" class="gold-link" onclick="showLogin()">Volver</a>
+            <a href="#" id="showLoginFromForgotLink" class="gold-link">Volver</a>
+        </div>
+    </form>
+
+</div>
+
+<div id="accountModal" class="modal account-modal" tabindex="-1">
+    <div class="account-card">
+        <button type="button" id="closeAccountModal" class="modal-close">×</button>
+        <div class="account-header">
+            <h2>Mi Cuenta</h2>
+        </div>
+        <form id="accountForm" class="account-body">
+            <div class="account-row">
+                <label>Nombre</label>
+                <input id="account-name" type="text" placeholder="Tu nombre">
+            </div>
+            <div class="account-row">
+                <label>Correo</label>
+                <input id="account-email" type="email" readonly>
+            </div>
+            <div class="account-row">
+                <label>Rol</label>
+                <input id="account-role" type="text" readonly>
+            </div>
+            <div class="account-row">
+                <label>Miembro desde</label>
+                <input id="account-createdAt" type="text" readonly>
+            </div>
+            <div class="account-row">
+                <label>Nueva contraseña</label>
+                <input id="account-password" type="password" placeholder="Nueva contraseña">
+            </div>
+            <div class="account-row">
+                <label>Confirmar contraseña</label>
+                <input id="account-password-confirm" type="password" placeholder="Repite la contraseña">
+            </div>
+            <div id="accountError" class="form-message"></div>
+            <button type="submit" id="accountSaveBtn" class="btn-premium">Guardar cambios</button>
+        </form>
+    </div>
+</div>
+
+<div id="ordersModal" class="modal orders-modal" tabindex="-1">
+    <div class="orders-card">
+        <button type="button" id="closeOrdersModal" class="modal-close">×</button>
+        <div class="orders-header">
+            <div>
+                <h2>Mis Pedidos</h2>
+                
+            </div>
+            <div class="orders-summary-info" id="orders-summary"></div>
+        </div>
+        <div class="orders-body">
+            <div id="orders-list" class="orders-list"></div>
         </div>
     </div>
-
 </div>
 
 <footer class="main-footer">
@@ -287,14 +341,14 @@
     <h3>Tu carrito</h3>
     <div id="cart-items"></div>
     <p id="cart-total">Total: $0</p>
-    <button class="btn-premium" onclick="checkoutCart()" style="width:100%; margin-top:15px;">
-    Finalizar compra
-</button>
+    <button id="checkoutBtn" type="button" class="btn-premium btn-block mt-15">
+        Finalizar compra
+    </button>
 
-<button class="btn-premium" onclick="clearCart()" style="width:100%; margin-top:10px;">
-    Vaciar carrito
-</button>
-<div id="checkout-msg" style="margin-top:15px; color:#d4af37; font-size:14px;"></div>
+    <button id="clearCartBtn" type="button" class="btn-premium btn-block mt-10 btn-secondary">
+        Vaciar carrito
+    </button>
+    <div id="checkout-msg" class="checkout-msg"></div>
 
 </div>
 

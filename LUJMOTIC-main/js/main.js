@@ -1,20 +1,14 @@
 import { initializeDefaultUsers, loginUser, registerUser, recoverPassword, saveNewPassword } from "./modules/auth.js";
 import { showLogin, showRegister, showForgot, registerModalEvents } from "./modules/modal.js";
-import { showUserDropdown, logoutUser } from "./modules/panel.js";
-import { addToCart, addToCartWithOptions, removeItem, clearCart, checkoutCart, setCartChangeHandler, getCart } from "./modules/cart.js";
+import { showUserDropdown } from "./modules/panel.js";
+import { addToCartWithOptions, clearCart, checkoutCart, setCartChangeHandler, getCart } from "./modules/cart.js";
 import { renderCart, updateCartCounter, showSizeGuide, closeSizeGuide } from "./modules/ui.js";
 import { getCurrentUser } from "./modules/storage.js";
-import { validateAdminAccess } from "./modules/admin/adminService.js";
 import { getProducts, initializeDefaultProducts } from "./modules/admin/productService.js";
 
 const cartIcon = document.getElementById("cartIcon");
 
 const exposeGlobalHandlers = () => {
-    window.addToCart = addToCart;
-    window.addToCartWithOptions = addToCartWithOptions;
-    window.removeItem = removeItem;
-    window.clearCart = clearCart;
-    window.checkoutCart = checkoutCart;
     window.showLogin = showLogin;
     window.showRegister = showRegister;
     window.showForgot = showForgot;
@@ -22,9 +16,7 @@ const exposeGlobalHandlers = () => {
     window.registerUser = registerUser;
     window.recoverPassword = recoverPassword;
     window.saveNewPassword = saveNewPassword;
-    window.logoutUser = logoutUser;
-    window.showSizeGuide = showSizeGuide;
-    window.closeSizeGuide = closeSizeGuide;
+    window.showUserDropdown = showUserDropdown;
 };
 
 const initializeCartUI = () => {
@@ -65,6 +57,41 @@ const registerCartPanelToggle = () => {
     });
 };
 
+const registerSizeGuideEvents = () => {
+    const sizeGuideBtn = document.getElementById("sizeGuideBtn");
+    const sizeGuideCloseBtn = document.getElementById("sizeGuideCloseBtn");
+    const sizeGuideModal = document.getElementById("sizeGuideModal");
+
+    if (sizeGuideBtn) {
+        sizeGuideBtn.addEventListener("click", showSizeGuide);
+    }
+
+    if (sizeGuideCloseBtn) {
+        sizeGuideCloseBtn.addEventListener("click", closeSizeGuide);
+    }
+
+    if (sizeGuideModal) {
+        sizeGuideModal.addEventListener("click", (event) => {
+            if (event.target === sizeGuideModal) {
+                closeSizeGuide();
+            }
+        });
+    }
+};
+
+const registerCheckoutEvents = () => {
+    const checkoutBtn = document.getElementById("checkoutBtn");
+    const clearCartBtn = document.getElementById("clearCartBtn");
+
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener("click", checkoutCart);
+    }
+
+    if (clearCartBtn) {
+        clearCartBtn.addEventListener("click", clearCart);
+    }
+};
+
 const renderStoreProducts = () => {
     const products = getProducts();
     const gridHombre = document.querySelector("#seccion-hombre .grid");
@@ -81,7 +108,7 @@ const renderStoreProducts = () => {
 
         productCard.innerHTML = `
             <div class="img-container">
-                <img src="${product.image || 'images/productos/placeholder.png'}" alt="${product.name}">
+                <img src="${product.image || "images/productos/placeholder.png"}" alt="${product.name}">
             </div>
             <div class="product-info">
                 <h3>${product.name}</h3>
@@ -101,33 +128,33 @@ const renderStoreProducts = () => {
                         <option value="Blanco">Blanco</option>
                     </select>
                 </div>
-                <button class="btn-premium btn-add-cart" onclick="addToCart('${product.name}', ${product.price}, event)">Agregar al carrito</button>
+                <button type="button" class="btn-premium btn-add-cart">Agregar al carrito</button>
             </div>
         `;
 
         const addBtn = productCard.querySelector(".btn-add-cart");
         if (addBtn) {
-            addBtn.addEventListener("click", () => {
-                setTimeout(() => {
-                    const sizeSelect = productCard.querySelector(".product-size");
-                    const colorSelect = productCard.querySelector(".product-color");
-                    if (sizeSelect) sizeSelect.value = "";
-                    if (colorSelect) colorSelect.value = "";
-                }, 100);
+            addBtn.addEventListener("click", (event) => {
+                addToCartWithOptions(addBtn, product.name, product.price, event);
+
+                const sizeSelect = productCard.querySelector(".product-size");
+                const colorSelect = productCard.querySelector(".product-color");
+                if (sizeSelect) sizeSelect.value = "";
+                if (colorSelect) colorSelect.value = "";
             });
         }
 
         return productCard;
     };
 
-    const hombreProducts = products.filter(p => p.category === "hombre");
-    const mujerProducts = products.filter(p => p.category === "mujer");
+    const hombreProducts = products.filter((p) => p.category === "hombre");
+    const mujerProducts = products.filter((p) => p.category === "mujer");
 
-    hombreProducts.forEach(product => {
+    hombreProducts.forEach((product) => {
         gridHombre.appendChild(createProductCard(product));
     });
 
-    mujerProducts.forEach(product => {
+    mujerProducts.forEach((product) => {
         gridMujer.appendChild(createProductCard(product));
     });
 };
@@ -135,31 +162,18 @@ const renderStoreProducts = () => {
 const initializeApp = () => {
     initializeDefaultUsers();
     initializeDefaultProducts();
-    registerModalEvents();
     exposeGlobalHandlers();
+    registerModalEvents();
     initializeCartUI();
     registerCartPanelToggle();
+    registerSizeGuideEvents();
+    registerCheckoutEvents();
     renderStoreProducts();
 
     const currentUser = getCurrentUser();
     if (currentUser) {
         showUserDropdown(currentUser);
     }
-};
-
-const updateNavBarButtons = (user) => {
-    const navbar = document.querySelector(".nav-actions");
-    if (!navbar) return;
-
-    const adminBtn = document.getElementById("admin-panel-btn");
-    const proveedorBtn = document.getElementById("proveedor-panel-btn");
-    if (adminBtn) adminBtn.remove();
-    if (proveedorBtn) proveedorBtn.remove();
-
-    if (!user) return;
-};
-
-const addProveedorPanelButton = () => {
 };
 
 window.addEventListener("DOMContentLoaded", initializeApp);
