@@ -1,10 +1,14 @@
 import { initializeDefaultUsers, loginUser, registerUser, recoverPassword, saveNewPassword } from "./modules/auth.js";
 import { showLogin, showRegister, showForgot, registerModalEvents } from "./modules/modal.js";
 import { showUserDropdown } from "./modules/panel.js";
-import { addToCartWithOptions, clearCart, checkoutCart, setCartChangeHandler, getCart } from "./modules/cart.js";
+import { addToCart, addToCartWithOptions, clearCart, checkoutCart, setCartChangeHandler, getCart } from "./modules/cart.js";
 import { renderCart, updateCartCounter, showSizeGuide, closeSizeGuide } from "./modules/ui.js";
 import { getCurrentUser } from "./modules/storage.js";
 import { getProducts, initializeDefaultProducts } from "./modules/admin/productService.js";
+import { initializeDefaultOrders } from "./modules/admin/ordersService.js";
+// Import account modules to ensure they initialize their event listeners
+import "./modules/account/accountUI.js";
+import "./modules/account/ordersUI.js";
 
 const cartIcon = document.getElementById("cartIcon");
 
@@ -147,8 +151,8 @@ const renderStoreProducts = () => {
         return productCard;
     };
 
-    const hombreProducts = products.filter((p) => p.category === "hombre");
-    const mujerProducts = products.filter((p) => p.category === "mujer");
+    const hombreProducts = products.filter((p) => String(p.category || "").toLowerCase() === "hombre");
+    const mujerProducts = products.filter((p) => String(p.category || "").toLowerCase() === "mujer");
 
     hombreProducts.forEach((product) => {
         gridHombre.appendChild(createProductCard(product));
@@ -162,6 +166,7 @@ const renderStoreProducts = () => {
 const initializeApp = () => {
     initializeDefaultUsers();
     initializeDefaultProducts();
+    initializeDefaultOrders();
     exposeGlobalHandlers();
     registerModalEvents();
     initializeCartUI();

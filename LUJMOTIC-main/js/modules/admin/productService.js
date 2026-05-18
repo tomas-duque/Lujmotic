@@ -13,9 +13,12 @@ export const getProductById = (id) => {
 
 export const createProduct = (productData) => {
     const products = getProducts();
+    const normalizedCategory = String(productData.category || "").trim().toLowerCase();
+
     const newProduct = {
         id: Date.now(),
         ...productData,
+        category: normalizedCategory,
         price: parseFloat(productData.price),
         stock: parseInt(productData.stock),
     };
@@ -32,9 +35,12 @@ export const updateProduct = (id, productData) => {
         throw new Error("Producto no encontrado.");
     }
 
+    const normalizedCategory = String(productData.category || "").trim().toLowerCase();
+
     products[index] = {
         ...products[index],
         ...productData,
+        category: normalizedCategory,
         price: parseFloat(productData.price),
         stock: parseInt(productData.stock),
     };
@@ -56,9 +62,7 @@ export const deleteProduct = (id) => {
 
 export const initializeDefaultProducts = () => {
     const existingProducts = getProducts();
-    
-    const hasProductsWithCategory = existingProducts.length > 0 && existingProducts.some(p => p.category);
-    if (hasProductsWithCategory) return;
+    if (existingProducts.length > 0) return;
 
     const defaultProducts = [
         {
@@ -127,9 +131,9 @@ export const initializeDefaultProducts = () => {
         }
     ];
 
-    const productsWithIds = defaultProducts.map(product => ({
+    const productsWithIds = defaultProducts.map((product, index) => ({
         ...product,
-        id: Date.now() + Math.random() // IDs únicos
+        id: Date.now() + index,
     }));
 
     saveProducts(productsWithIds);

@@ -1,7 +1,7 @@
 const modal = document.getElementById("loginModal");
-const loginView = document.getElementById("loginView");
-const registerView = document.getElementById("registerView");
-const forgotView = document.getElementById("forgotView");
+const loginView = document.getElementById("loginView") || document.querySelector("#loginForm");
+const registerView = document.getElementById("registerView") || document.getElementById("registerForm");
+const forgotView = document.getElementById("forgotView") || document.getElementById("forgotForm");
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
 const forgotForm = document.getElementById("forgotForm");
@@ -19,6 +19,7 @@ export const unlockBodyScroll = () => {
     window.scrollTo(0, scrollLockTop);
 };
 
+
 const handleEscapeClose = (event) => {
     if (event.key === "Escape") {
         closeModal();
@@ -26,27 +27,78 @@ const handleEscapeClose = (event) => {
 };
 
 export const showLogin = () => {
-    if (!loginView || !registerView || !forgotView) return;
-
-    loginView.style.display = "block";
-    registerView.style.display = "none";
-    forgotView.style.display = "none";
+    if (!loginForm) return;
+    
+    // Reset form
+    if (loginForm) loginForm.reset();
+    
+    // Show/hide views - remove hidden class to override !important
+    if (loginForm) {
+        loginForm.classList.remove("hidden");
+        loginForm.style.display = "block";
+    }
+    if (registerForm) {
+        registerForm.classList.add("hidden");
+        registerForm.style.display = "none";
+    }
+    if (forgotForm) {
+        forgotForm.classList.add("hidden");
+        forgotForm.style.display = "none";
+    }
+    
+    // Focus email input
+    const emailInput = loginForm?.querySelector("#login-email");
+    if (emailInput) emailInput.focus();
 };
 
 export const showRegister = () => {
-    if (!loginView || !registerView || !forgotView) return;
-
-    loginView.style.display = "none";
-    registerView.style.display = "block";
-    forgotView.style.display = "none";
+    if (!registerForm) return;
+    
+    // Reset form
+    if (registerForm) registerForm.reset();
+    
+    // Show/hide views - remove hidden class to override !important
+    if (loginForm) {
+        loginForm.classList.add("hidden");
+        loginForm.style.display = "none";
+    }
+    if (registerForm) {
+        registerForm.classList.remove("hidden");
+        registerForm.style.display = "block";
+    }
+    if (forgotForm) {
+        forgotForm.classList.add("hidden");
+        forgotForm.style.display = "none";
+    }
+    
+    // Focus name input
+    const nameInput = registerForm?.querySelector("#register-name");
+    if (nameInput) nameInput.focus();
 };
 
 export const showForgot = () => {
-    if (!loginView || !registerView || !forgotView) return;
-
-    loginView.style.display = "none";
-    registerView.style.display = "none";
-    forgotView.style.display = "block";
+    if (!forgotForm) return;
+    
+    // Reset form
+    if (forgotForm) forgotForm.reset();
+    
+    // Show/hide views - remove hidden class to override !important
+    if (loginForm) {
+        loginForm.classList.add("hidden");
+        loginForm.style.display = "none";
+    }
+    if (registerForm) {
+        registerForm.classList.add("hidden");
+        registerForm.style.display = "none";
+    }
+    if (forgotForm) {
+        forgotForm.classList.remove("hidden");
+        forgotForm.style.display = "block";
+    }
+    
+    // Focus email input
+    const emailInput = forgotForm?.querySelector("#forgot-email");
+    if (emailInput) emailInput.focus();
 };
 
 export const openModal = () => {
@@ -67,19 +119,23 @@ export const closeModal = () => {
 };
 
 export const registerModalEvents = () => {
+    // Button to open/navigate modal
     const loginButton = document.getElementById("loginBtn");
     const registerLink = document.getElementById("showRegisterLink");
     const forgotLink = document.getElementById("showForgotLink");
     const loginLink = document.getElementById("showLoginLink");
     const loginFromForgotLink = document.getElementById("showLoginFromForgotLink");
 
+    // Login Button - open modal
     if (loginButton) {
-        loginButton.addEventListener("click", () => {
+        loginButton.addEventListener("click", (e) => {
+            e.preventDefault();
             openModal();
             showLogin();
         });
     }
 
+    // Register Link - switch to register view
     if (registerLink) {
         registerLink.addEventListener("click", (event) => {
             event.preventDefault();
@@ -87,6 +143,7 @@ export const registerModalEvents = () => {
         });
     }
 
+    // Forgot Link - switch to forgot view
     if (forgotLink) {
         forgotLink.addEventListener("click", (event) => {
             event.preventDefault();
@@ -94,6 +151,7 @@ export const registerModalEvents = () => {
         });
     }
 
+    // Login Link from register - switch to login view
     if (loginLink) {
         loginLink.addEventListener("click", (event) => {
             event.preventDefault();
@@ -101,6 +159,7 @@ export const registerModalEvents = () => {
         });
     }
 
+    // Login Link from forgot - switch to login view
     if (loginFromForgotLink) {
         loginFromForgotLink.addEventListener("click", (event) => {
             event.preventDefault();
@@ -108,12 +167,16 @@ export const registerModalEvents = () => {
         });
     }
 
-    window.addEventListener("click", (event) => {
-        if (event.target === modal) {
-            closeModal();
-        }
-    });
+    // Close modal when clicking outside (on modal backdrop)
+    if (modal) {
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    }
 
+    // Form Submit Handlers
     if (loginForm) {
         loginForm.addEventListener("submit", (event) => {
             event.preventDefault();
@@ -134,8 +197,4 @@ export const registerModalEvents = () => {
             window.recoverPassword?.();
         });
     }
-
-    document.querySelectorAll("form").forEach((form) => {
-        form.addEventListener("submit", (event) => event.preventDefault());
-    });
 };

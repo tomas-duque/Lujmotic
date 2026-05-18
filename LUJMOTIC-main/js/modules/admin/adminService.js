@@ -5,8 +5,9 @@ export const validateAdminAccess = () => {
     if (!currentUser) {
         return { isAdmin: false, error: "Debes iniciar sesión." };
     }
-    if (currentUser.role !== "admin") {
-        return { isAdmin: false, error: "Acceso denegado. Solo administradores." };
+    const allowedRoles = ["admin", "proveedor"];
+    if (!allowedRoles.includes(currentUser.role)) {
+        return { isAdmin: false, error: "Acceso denegado. Solo administradores o proveedores autorizados." };
     }
     return { isAdmin: true, user: currentUser };
 };

@@ -1,4 +1,4 @@
-import { getData, clearCurrentUser } from "./storage.js";
+import { clearCurrentUser } from "./storage.js";
 import { openAccountModal } from "./account/accountUI.js";
 import { openOrdersPanel } from "./account/ordersUI.js";
 
@@ -32,6 +32,7 @@ if (userDropdownBtn) {
 }
 
 export const showUserDropdown = (user) => {
+    if (!user) return;
     if (!userDropdownContainer || !userName || !dropdownUserName || !dropdownUserEmail) return;
 
     userName.innerText = user.name;

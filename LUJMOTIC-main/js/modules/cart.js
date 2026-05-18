@@ -110,6 +110,7 @@ export const checkoutCart = () => {
         items: [...cart],
         total,
         date: new Date().toLocaleString(),
+        status: "pendiente",
     };
 
     const orders = getData("orders") || [];

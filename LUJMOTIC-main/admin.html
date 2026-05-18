@@ -58,10 +58,28 @@
             
             <div id="tab-productos" class="admin-tab-content hidden">
                 <div class="productos-header">
-                    <h1>Gestión de Productos</h1>
+                    <div>
+                        <h1>Gestión de Productos</h1>
+                        <p class="subtitle">Revisa inventario, actualiza stock y administra productos con precisión.</p>
+                    </div>
                     <button id="add-product-btn" class="btn-add-product">
-                        Nuevo Producto
+                        + Nuevo Producto
                     </button>
+                </div>
+
+                <div class="admin-toolbar">
+                    <div class="admin-search">
+                        <input id="product-search-input" type="search" placeholder="Buscar producto por nombre..." />
+                        <span class="search-icon">🔍</span>
+                    </div>
+                    <div class="admin-select">
+                        <select id="product-filter-category">
+                            <option value="all">Todas las categorías</option>
+                            <option value="Hombre">Hombre</option>
+                            <option value="Mujer">Mujer</option>
+                            <option value="Accesorios">Accesorios</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="table-container">
@@ -99,6 +117,7 @@
                                 <th>Productos</th>
                                 <th>Total</th>
                                 <th>Fecha</th>
+                                <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -119,6 +138,7 @@
                                 <th>Nombre</th>
                                 <th>Email</th>
                                 <th>Rol</th>
+                                <th>Registro</th>
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -198,6 +218,16 @@
                     <button id="form-cancel-btn" type="button" class="btn-cancel">Cancelar</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div id="order-detail-modal" class="admin-modal hidden">
+        <div class="admin-modal-content admin-modal-content--wide">
+            <div class="admin-modal-header">
+                <h2>Detalles del Pedido</h2>
+                <button id="order-detail-close-btn" class="btn-modal-close">✕</button>
+            </div>
+            <div id="order-detail-content" class="order-detail-content"></div>
         </div>
     </div>
 
